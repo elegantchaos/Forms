@@ -14,14 +14,14 @@ public protocol RowModifier: ViewModifier {
 }
 
 public protocol FieldModifier: ViewModifier {
+    associatedtype Settings: FieldSettings
     associatedtype FormStyle: FormModifier where FormStyle.FieldStyle == Self
-    init(settings: FormStyle.FieldSettingsType, form: FormStyle)
+    init(settings: Settings, form: FormStyle)
 }
 
 public protocol FormModifier {
     associatedtype RowStyle: RowModifier
     associatedtype FieldStyle: FieldModifier
-    associatedtype FieldSettingsType: FieldSettings
 
     var headerFont: Font { get }
     var headerOpacity: Double { get }
@@ -36,10 +36,9 @@ public protocol FormModifier {
 
 }
 
-public struct FormFactory<A: RowModifier, B: FieldModifier, S: FieldSettings>: FormModifier {
-    public typealias RowStyle = A
-    public typealias FieldStyle = B
-    public typealias FieldSettingsType = S
+public struct FormFactory<RowType, FieldType>: FormModifier where RowType: RowModifier, FieldType: FieldModifier {
+    public typealias RowStyle = RowType
+    public typealias FieldStyle = FieldType
     
     public let headerFont: Font
     public let headerOpacity: Double
@@ -74,10 +73,10 @@ public struct FormFactory<A: RowModifier, B: FieldModifier, S: FieldSettings>: F
         FormRow(label: label, style: self, content: content)
     }
     
-    //
-    //    func field(label: String, placeholder: String? = nil, variable: Binding<String>, settings: FieldType.SettingsType) -> FieldType {
-    //        FormFieldRow<Self>(label: label, placeholder: placeholder, variable: variable, style: self, settings: settings)
-    //    }
+    func field(label: String, placeholder: String? = nil, variable: Binding<String>, settings: FieldType.Settings) -> FormFieldRow<FieldType> where FieldType.FormStyle == Self {
+        FormFieldRow<FieldType>(label: label, placeholder: placeholder, variable: variable, style: self, settings: settings)
+    }
+    
     //    func picker<Variable>(label: String, variable: Binding<Variable>, cases: [Variable]) -> FormPickerRow<Variable, RowStyleType> where Variable: Labelled {
     //        FormPickerRow(label: label, variable: variable, cases: cases, style: rowStyle)
     //    }
@@ -95,7 +94,7 @@ func test() {
     }
     
     struct TestFieldStyle<A: RowModifier>: FieldModifier {
-        typealias FormStyle = FormFactory<A,Self, TestFieldSettings>
+        typealias FormStyle = FormFactory<A,Self>
 
         let form: FormStyle
         let settings: TestFieldSettings
@@ -110,10 +109,12 @@ func test() {
         }
     }
     
-    let form = FormFactory<TestRowStyle, TestFieldStyle<TestRowStyle>, TestFieldSettings>(rowStyle: TestRowStyle())
+    let settings = TestFieldSettings()
+    let form = FormFactory<TestRowStyle, TestFieldStyle<TestRowStyle>>(rowStyle: TestRowStyle())
     let row = form.row(label: "Test") {
         Text("blah")
     }
+    let field = form.field(label: "test", placeholder: "test", variable: .constant("test"), settings: settings)
 }
 
 //public protocol FieldSettings {
