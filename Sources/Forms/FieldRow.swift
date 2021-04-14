@@ -5,15 +5,15 @@
 
 import SwiftUI
 
-public struct FormFieldRow<FieldStyle>: View where FieldStyle: FieldModifier {
+public struct FieldRow<FieldStyle>: View where FieldStyle: FieldModifier {
     let label: String
     let placeholder: String
     let variable: Binding<String>
     let clearButton: Bool
-    let style: FieldStyle.FormStyle
+    let style: FieldStyle.Form
     let modifier: FieldStyle
     
-    public init(label: String, placeholder: String? = nil, variable: Binding<String>, style: FieldStyle.FormStyle, settings: FieldStyle.Settings, clearButton: Bool = false) {
+    public init(label: String, placeholder: String? = nil, variable: Binding<String>, style: FieldStyle.Form, settings: FieldStyle.Settings, clearButton: Bool = false) {
         self.label = label
         self.variable = variable
         self.style = style
@@ -38,7 +38,7 @@ public struct FormFieldRow<FieldStyle>: View where FieldStyle: FieldModifier {
 
 #if canImport(UIKit)
 
-@available(macOS 11.0, *) public struct DefaultFormFieldSettings : FieldSettings {
+@available(macOS 11.0, *) public struct DefaultFormFieldSettings : FieldConfiguration {
     let contentType: UITextContentType?
     let autocapitalization: UITextAutocapitalizationType
     let disableAutocorrection: Bool

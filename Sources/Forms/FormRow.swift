@@ -5,13 +5,13 @@
 
 import SwiftUI
 
-public struct FormRow<Content, FormStyle>: View where Content: View, FormStyle: FormModifier {
+public struct FormRow<Content, Form>: View where Content: View, Form: FormStyle {
     let label: String
     let alignment: VerticalAlignment
-    let style: FormStyle
+    let style: Form
     let content: () -> Content
     
-    public init(label: String, alignment: VerticalAlignment = .firstTextBaseline, style: FormStyle, @ViewBuilder content: @escaping () -> Content) {
+    public init(label: String, alignment: VerticalAlignment = .firstTextBaseline, style: Form, @ViewBuilder content: @escaping () -> Content) {
         self.label = label
         self.alignment = alignment
         self.style = style
