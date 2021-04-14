@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-public struct FormRow<Content, FormStyle>: View where Content: View, FormStyle: FormStyleDescription {
+public struct FormRow<Content, FormStyle>: View where Content: View, FormStyle: FormModifier {
     let label: String
     let alignment: VerticalAlignment
     let style: FormStyle
@@ -20,7 +20,7 @@ public struct FormRow<Content, FormStyle>: View where Content: View, FormStyle: 
 
     public var body: some View {
         HStack(alignment: alignment) {
-            AlignedLabel(label)
+            Text(label)
                 .font(style.labelFont)
                 .opacity(style.labelOpacity)
             content()
